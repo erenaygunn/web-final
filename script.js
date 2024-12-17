@@ -248,41 +248,60 @@ function loadInventory() {
 
 // Add Package to Inventory
 function addPackage() {
-	const amount = parseFloat(document.getElementById("rawAmount").value);
+	const numPackages = parseFloat(document.getElementById("rawAmount").value);
 	const type = document.getElementById("packageType").value;
 	const price = parseFloat(document.getElementById("packagePrice").value);
 
-	if (isNaN(amount) || isNaN(price) || amount <= 0 || price <= 0) {
-		alert("Please enter valid amount and price.");
+	if (isNaN(numPackages) || isNaN(price) || numPackages <= 0 || price <= 0) {
+		alert("Please enter valid number of packages and price.");
 		return;
 	}
 
+	const packageWeights = {
+		"Small (100g)": 0.1,
+		"Medium (200g)": 0.2,
+		"Large (500g)": 0.5,
+		"Extra Large (1kg)": 1,
+		"Family pack (2kg)": 2,
+		"Bulk pack (5kg)": 5,
+		custom: 0, // Custom weight will be handled separately
+	};
+
+	let weightPerPackage = packageWeights[type];
+	if (type === "custom") {
+		weightPerPackage = parseFloat(prompt("Enter custom package weight (kg):"));
+		if (isNaN(weightPerPackage) || weightPerPackage <= 0) {
+			alert("Please enter a valid custom package weight.");
+			return;
+		}
+	}
+
+	const totalWeight = numPackages * weightPerPackage;
+
 	const rawInventory = JSON.parse(localStorage.getItem("rawInventory"));
-	if (amount > rawInventory.quantity) {
+	if (totalWeight > rawInventory.quantity) {
 		alert("Not enough raw inventory available.");
 		return;
 	}
 
 	// Update raw inventory
-	rawInventory.quantity -= amount;
+	rawInventory.quantity -= totalWeight;
 	localStorage.setItem("rawInventory", JSON.stringify(rawInventory));
 
 	// Update packages
 	const packages = JSON.parse(localStorage.getItem("packages"));
-	const existingPackageIndex = packages.findIndex(
-		(pkg) => pkg.category === type
-	);
+	const existingPackageIndex = packages.findIndex((pkg) => pkg.type === type);
 
 	if (existingPackageIndex >= 0) {
 		// Update existing package
-		packages[existingPackageIndex].quantity += amount;
+		packages[existingPackageIndex].quantity += numPackages;
 		packages[existingPackageIndex].price = price; // Update price
 	} else {
 		// Add new package
 		packages.push({
 			id: packages.length + 2,
-			category: type,
-			quantity: amount,
+			type: type,
+			quantity: numPackages,
 			price,
 		});
 	}
