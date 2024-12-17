@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
+		<title>Blueberry Management System</title>
+		<link
+			rel="stylesheet"
+			href="styles.css"
+		/>
+	</head>
+	<body>
+		<header>
+			<nav>
+				<ul class="navbar">
+					<li>
+						<a
+							href="#farmers"
+							class="active"
+							onclick="switchTab('farmers')"
+							>Farmers</a
+						>
+					</li>
+					<li>
+						<a
+							href="#packaging"
+							onclick="switchTab('packaging')"
+							>Packaging</a
+						>
+					</li>
+					<li>
+						<a
+							href="#sales"
+							onclick="switchTab('sales')"
+							>Sales</a
+						>
+					</li>
+					<li>
+						<a
+							href="#financial"
+							onclick="switchTab('financial')"
+							>Financial Analysis</a
+						>
+					</li>
+					<li>
+						<a
+							href="#inventory"
+							onclick="switchTab('inventory')"
+							>Inventory</a
+						>
+					</li>
+					<li>
+						<a
+							href="#report"
+							onclick="switchTab('report')"
+							>Report</a
+						>
+					</li>
+				</ul>
+			</nav>
+		</header>
+
+		<main>
+			<!-- Farmers Page -->
+			<section
+				id="farmers"
+				class="tab active"
+			>
+				<h1>Farmers Management</h1>
+				<button onclick="showAddFarmerModal()">Add Farmer</button>
+				<button onclick="showEditFarmerModal()">Edit Farmer</button>
+				<div>
+					<input
+						type="text"
+						id="searchFarmers"
+						placeholder="Search Farmers"
+						oninput="searchFarmers()"
+					/>
+				</div>
+
+				<!-- Farmer List Table -->
+				<table id="farmersTable">
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Name</th>
+							<th>Contact</th>
+							<th>Location</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- Farmer Rows Will Be Injected Here -->
+					</tbody>
+				</table>
+
+				<!-- Modal for Adding Farmer -->
+				<div
+					id="addFarmerModal"
+					class="modal"
+				>
+					<div class="modal-content">
+						<span
+							class="close"
+							onclick="closeAddFarmerModal()"
+							>&times;</span
+						>
+						<h2>Add Farmer</h2>
+						<form id="addFarmerForm">
+							<label for="farmerName">Name:</label>
+							<input
+								type="text"
+								id="farmerName"
+								required
+							/><br /><br />
+
+							<label for="farmerContact">Contact:</label>
+							<input
+								type="text"
+								id="farmerContact"
+								required
+							/><br /><br />
+
+							<label for="farmerLocation">Location:</label>
+							<input
+								type="text"
+								id="farmerLocation"
+								required
+							/><br /><br />
+
+							<button type="submit">Add Farmer</button>
+						</form>
+					</div>
+				</div>
+				<!-- Modal for Editing Farmer -->
+				<div
+					id="editFarmerModal"
+					class="modal"
+				>
+					<div class="modal-content">
+						<span
+							class="close"
+							onclick="closeEditFarmerModal()"
+							>&times;</span
+						>
+						<h2>Edit Farmer</h2>
+						<form id="editFarmerForm">
+							<label for="selectFarmer">Select Farmer:</label>
+							<select
+								id="selectFarmer"
+								onchange="populateFarmerDetails()"
+								required
+							>
+								<!-- Options will be dynamically injected --></select
+							><br /><br />
+
+							<label for="editFarmerName">Name:</label>
+							<input
+								type="text"
+								id="editFarmerName"
+								required
+							/><br /><br />
+
+							<label for="editFarmerContact">Contact:</label>
+							<input
+								type="text"
+								id="editFarmerContact"
+								required
+							/><br /><br />
+
+							<label for="editFarmerLocation">Location:</label>
+							<input
+								type="text"
+								id="editFarmerLocation"
+								required
+							/><br /><br />
+
+							<button type="submit">Save Changes</button>
+						</form>
+					</div>
+				</div>
+			</section>
+
+			<!-- Packaging Page -->
+			<section
+				id="packaging"
+				class="tab"
+			>
+				<h1>Product Categorization & Packaging</h1>
+				<div>
+					<label for="rawAmount">Amount (kg):</label>
+					<input
+						type="number"
+						id="rawAmount"
+						placeholder="Enter amount in kg"
+					/>
+				</div>
+				<div>
+					<label for="packageType">Package Type:</label>
+					<select id="packageType">
+						<option value="small">Small (1kg)</option>
+						<option value="medium">Medium (2kg)</option>
+						<option value="large">Large (5kg)</option>
+					</select>
+				</div>
+				<div>
+					<label for="packagePrice">Price per Package ($):</label>
+					<input
+						type="number"
+						id="packagePrice"
+						placeholder="Enter price"
+					/>
+				</div>
+				<button onclick="addPackage()">Add to Inventory</button>
+
+				<h2>Package Stock</h2>
+				<table id="packageTable">
+					<thead>
+						<tr>
+							<th>Package Type</th>
+							<th>Quantity</th>
+							<th>Price ($)</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- Package rows will be dynamically injected -->
+					</tbody>
+				</table>
+
+				<h2>Raw Inventory</h2>
+				<p id="rawInventoryStatus">Remaining raw inventory: 100kg</p>
+			</section>
+
+			<!-- Sales Page -->
+			<section
+				id="sales"
+				class="tab"
+			>
+				<h1>Sales Management</h1>
+				<div>
+					<button onclick="showAddSaleModal()">Add Sale</button>
+				</div>
+
+				<!-- Sales List Table -->
+				<table id="salesTable">
+					<thead>
+						<tr>
+							<th>Sale ID</th>
+							<th>Date & Time</th>
+							<th>Quantity (kg)</th>
+							<th>Price per kg</th>
+							<th>Total Cost</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- Sales Rows Will Be Injected Here -->
+					</tbody>
+				</table>
+
+				<!-- Modal for Adding Sale -->
+				<div
+					id="addSaleModal"
+					class="modal"
+				>
+					<div class="modal-content">
+						<span
+							class="close"
+							onclick="closeAddSaleModal()"
+							>&times;</span
+						>
+						<h2>Add Sale</h2>
+						<form id="addSaleForm">
+							<label for="saleQuantity">Quantity (kg):</label>
+							<input
+								type="number"
+								id="saleQuantity"
+								required
+							/><br /><br />
+
+							<label for="salePrice">Price per kg:</label>
+							<input
+								type="number"
+								id="salePrice"
+								required
+							/><br /><br />
+
+							<button type="submit">Add Sale</button>
+						</form>
+					</div>
+				</div>
+			</section>
+
+			<!-- Financial Analysis Page -->
+			<section
+				id="financial"
+				class="tab"
+			>
+				<h1>Financial Analysis</h1>
+				<!-- Content for Financial Analysis -->
+			</section>
+
+			<!-- Inventory Page -->
+			<section
+				id="inventory"
+				class="tab"
+			>
+				<h1>Inventory Management</h1>
+				<h2>Current Stock</h2>
+				<table id="inventoryTable">
+					<thead>
+						<tr>
+							<th>Item ID</th>
+							<th>Category</th>
+							<th>Quantity</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- Inventory rows will be dynamically injected -->
+					</tbody>
+				</table>
+			</section>
+
+			<!-- Report Page -->
+			<section
+				id="report"
+				class="tab"
+			>
+				<h1>Comprehensive Report</h1>
+				<!-- Content for Report -->
+			</section>
+		</main>
+
+		<script src="script.js"></script>
+	</body>
+</html>
