@@ -504,7 +504,7 @@ function loadAllPurchases() {
 		const row = document.createElement("tr");
 		row.innerHTML = `
 			<td>${purchase.id}</td>
-			<td>${purchase.name}</td>
+			<td>${purchase.farmerName}</td>
 			<td>${purchase.farmerId}</td>
 			<td>${purchase.date}</td>
 			<td>${purchase.quantity}</td>
@@ -514,6 +514,18 @@ function loadAllPurchases() {
 		tableBody.appendChild(row);
 	});
 }
+
+// Initial Load
+document.addEventListener("DOMContentLoaded", () => {
+	loadFarmers();
+	loadPackagingData();
+	loadInventory();
+	loadAllPurchases(); // Load all sales records on page load
+	const selectedFarmerId = localStorage.getItem("selectedFarmerId");
+	if (selectedFarmerId) {
+		loadSales(selectedFarmerId);
+	}
+});
 
 // Initial Load
 document.addEventListener("DOMContentLoaded", () => {

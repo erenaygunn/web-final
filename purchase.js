@@ -1,7 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
 	const urlParams = new URLSearchParams(window.location.search);
 	const farmerId = urlParams.get("farmerId");
+	const farmers = JSON.parse(localStorage.getItem("farmers"));
+	const farmer = farmers.find((f) => f.id === parseInt(farmerId));
 	document.getElementById("farmerId").value = farmerId;
+	document.getElementById("farmerName").value = farmer.name;
 	document.getElementById("purchaseDate").value = new Date().toLocaleString();
 
 	loadPurchases(farmerId);
@@ -25,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const newPurchase = {
 				id: newId,
 				farmerId: farmerId,
+				farmerName: farmer.name,
 				date: date,
 				quantity: quantity,
 				pricePerKg: pricePerKg,
