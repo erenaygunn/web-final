@@ -241,7 +241,7 @@ function loadInventory() {
 		row.innerHTML = `
 			<td>${item.id}</td>
 			<td>${item.category || item.type}</td>
-			<td>${item.quantity}kg</td>
+			<td>${item.category ? item.quantity + "kg" : item.quantity + "pcs"}</td>
 			<td>${item.threshold || " "}</td>
 		`;
 		tableBody.appendChild(row);
@@ -504,6 +504,7 @@ function loadAllPurchases() {
 		const row = document.createElement("tr");
 		row.innerHTML = `
 			<td>${purchase.id}</td>
+			<td>${purchase.name}</td>
 			<td>${purchase.farmerId}</td>
 			<td>${purchase.date}</td>
 			<td>${purchase.quantity}</td>
