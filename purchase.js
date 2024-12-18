@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
 	document.getElementById("purchaseDate").value = new Date().toLocaleString();
 
 	loadPurchases(farmerId);
-	loadInventory(); // Load inventory on page load
 
 	document
 		.getElementById("purchaseForm")
@@ -84,12 +83,4 @@ function updateRawInventory(quantity) {
 	const rawInventory = JSON.parse(localStorage.getItem("rawInventory"));
 	rawInventory.quantity += quantity;
 	localStorage.setItem("rawInventory", JSON.stringify(rawInventory));
-	loadInventory(); // Update inventory display
-}
-
-function loadInventory() {
-	const rawInventory = JSON.parse(localStorage.getItem("rawInventory"));
-	document.getElementById(
-		"rawInventoryStatus"
-	).textContent = `Remaining raw inventory: ${rawInventory.quantity}kg`;
 }

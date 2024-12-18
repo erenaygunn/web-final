@@ -181,6 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	loadFarmers();
 	loadPackagingData();
 	loadInventory();
+	loadAllPurchases(); // Load all sales records on page load
 	const selectedFarmerId = localStorage.getItem("selectedFarmerId");
 	if (selectedFarmerId) {
 		loadSales(selectedFarmerId);
@@ -216,6 +217,7 @@ function loadPackagingData() {
         <td>${pkg.type}</td>
         <td>${pkg.quantity}</td>
         <td>${pkg.price}</td>
+        <td>${pkg.threshold}</td>
         <td>
           <button onclick="editPackage(${index})">Edit</button>
           <button onclick="deletePackage(${index})">Delete</button>
@@ -240,6 +242,7 @@ function loadInventory() {
 			<td>${item.id}</td>
 			<td>${item.category || item.type}</td>
 			<td>${item.quantity}kg</td>
+			<td>${item.threshold || " "}</td>
 		`;
 		tableBody.appendChild(row);
 	});
@@ -250,9 +253,17 @@ function addPackage() {
 	const numPackages = parseFloat(document.getElementById("rawAmount").value);
 	const type = document.getElementById("packageType").value;
 	const price = parseFloat(document.getElementById("packagePrice").value);
+	const threshold = parseFloat(document.getElementById("stockThreshold").value);
 
-	if (isNaN(numPackages) || isNaN(price) || numPackages <= 0 || price <= 0) {
-		alert("Please enter valid number of packages and price.");
+	if (
+		isNaN(numPackages) ||
+		isNaN(price) ||
+		isNaN(threshold) ||
+		numPackages <= 0 ||
+		price <= 0 ||
+		threshold < 0
+	) {
+		alert("Please enter valid number of packages, price, and threshold.");
 		return;
 	}
 
@@ -295,6 +306,7 @@ function addPackage() {
 		// Update existing package
 		packages[existingPackageIndex].quantity += numPackages;
 		packages[existingPackageIndex].price = price; // Update price
+		packages[existingPackageIndex].threshold = threshold; // Update threshold
 	} else {
 		// Add new package
 		packages.push({
@@ -302,12 +314,14 @@ function addPackage() {
 			type: type,
 			quantity: numPackages,
 			price,
+			threshold,
 		});
 	}
 
 	localStorage.setItem("packages", JSON.stringify(packages));
 	loadPackagingData();
 	loadInventory();
+	checkStockAlerts();
 }
 
 // Edit Package
@@ -316,14 +330,36 @@ function editPackage(index) {
 	const pkg = packages[index];
 
 	const newPrice = parseFloat(prompt("Enter new price:", pkg.price));
-	if (isNaN(newPrice) || newPrice <= 0) {
-		alert("Invalid price entered.");
+	const newThreshold = parseFloat(
+		prompt("Enter new stock alert threshold:", pkg.threshold)
+	);
+	if (
+		isNaN(newPrice) ||
+		newPrice <= 0 ||
+		isNaN(newThreshold) ||
+		newThreshold < 0
+	) {
+		alert("Invalid price or threshold entered.");
 		return;
 	}
 
 	pkg.price = newPrice;
+	pkg.threshold = newThreshold;
 	localStorage.setItem("packages", JSON.stringify(packages));
 	loadPackagingData();
+	checkStockAlerts();
+}
+
+// Check stock alerts
+function checkStockAlerts() {
+	const packages = JSON.parse(localStorage.getItem("packages"));
+	packages.forEach((pkg) => {
+		if (pkg.quantity < pkg.threshold) {
+			alert(
+				`Stock alert: ${pkg.type} is below the threshold of ${pkg.threshold}`
+			);
+		}
+	});
 }
 
 // Delete Package
@@ -458,10 +494,31 @@ function selectFarmer(farmerId) {
 	loadSales(farmerId);
 }
 
+// Load all sales data and display in the table
+function loadAllPurchases() {
+	const purchases = JSON.parse(localStorage.getItem("purchases")) || [];
+	const tableBody = document.querySelector("#allSalesTable tbody");
+	tableBody.innerHTML = ""; // Clear existing rows
+
+	purchases.forEach((purchase) => {
+		const row = document.createElement("tr");
+		row.innerHTML = `
+			<td>${purchase.id}</td>
+			<td>${purchase.farmerId}</td>
+			<td>${purchase.date}</td>
+			<td>${purchase.quantity}</td>
+			<td>${purchase.pricePerKg}</td>
+			<td>${purchase.totalCost}</td>
+		`;
+		tableBody.appendChild(row);
+	});
+}
+
 // Initial Load
 document.addEventListener("DOMContentLoaded", () => {
 	const selectedFarmerId = localStorage.getItem("selectedFarmerId");
 	if (selectedFarmerId) {
 		loadSales(selectedFarmerId);
 	}
+	loadAllPurchases(); // Load all sales records on page load
 });

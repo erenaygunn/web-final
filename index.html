@@ -182,6 +182,25 @@
 						</form>
 					</div>
 				</div>
+
+				<!-- All Sales Records Table -->
+				<h2>All Sales Records</h2>
+				<table id="allSalesTable">
+					<thead>
+						<tr>
+							<th>Purchase ID</th>
+							<th>Farmer Name</th>
+							<th>Farmer ID</th>
+							<th>Date & Time</th>
+							<th>Quantity (kg)</th>
+							<th>Price per kg</th>
+							<th>Total Cost</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- Sales rows will be dynamically injected -->
+					</tbody>
+				</table>
 			</section>
 
 			<!-- Packaging Page -->
@@ -218,6 +237,14 @@
 						placeholder="Enter price"
 					/>
 				</div>
+				<div>
+					<label for="stockThreshold">Stock Alert Threshold:</label>
+					<input
+						type="number"
+						id="stockThreshold"
+						placeholder="Enter stock alert threshold"
+					/>
+				</div>
 				<button onclick="addPackage()">Add to Inventory</button>
 
 				<h2>Package Stock</h2>
@@ -227,6 +254,7 @@
 							<th>Package Type</th>
 							<th>Quantity</th>
 							<th>Price ($)</th>
+							<th>Threshold</th>
 							<th>Actions</th>
 						</tr>
 					</thead>
@@ -321,6 +349,7 @@
 							<th>Item ID</th>
 							<th>Category</th>
 							<th>Quantity</th>
+							<th>Threshold</th>
 						</tr>
 					</thead>
 					<tbody>
