@@ -165,11 +165,10 @@ function searchFarmers() {
 		const row = document.createElement("tr");
 		row.innerHTML = `
         <td>${farmer.id}</td>
-        <td>${farmer.name}</td>
+        <td><a href="purchase.html?farmerId=${farmer.id}">${farmer.name}</a></td>
         <td>${farmer.contact}</td>
         <td>${farmer.location}</td>
         <td>
-          <button onclick="editFarmer(${farmer.id})">Edit</button>
           <button onclick="deleteFarmer(${farmer.id})">Delete</button>
         </td>
       `;
