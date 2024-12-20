@@ -412,43 +412,6 @@ function loadSales(farmerId) {
 	});
 }
 
-// Add a new sale
-function showAddSaleModal() {
-	document.getElementById("addSaleModal").style.display = "block";
-}
-
-function closeAddSaleModal() {
-	document.getElementById("addSaleModal").style.display = "none";
-}
-
-document.getElementById("addSaleForm").addEventListener("submit", function (e) {
-	e.preventDefault();
-
-	const farmerId = parseInt(localStorage.getItem("selectedFarmerId"));
-	const quantity = parseFloat(document.getElementById("saleQuantity").value);
-	const pricePerKg = parseFloat(document.getElementById("salePrice").value);
-	const totalCost = quantity * pricePerKg;
-	const date = new Date().toLocaleString();
-
-	const sales = JSON.parse(localStorage.getItem("sales"));
-	const newId = sales.length ? sales[sales.length - 1].id + 1 : 1; // Auto-generate Sale ID
-	const newSale = {
-		id: newId,
-		farmerId: farmerId,
-		date: date,
-		quantity: quantity,
-		pricePerKg: pricePerKg,
-		totalCost: totalCost,
-	};
-
-	sales.push(newSale);
-	localStorage.setItem("sales", JSON.stringify(sales));
-
-	updateInventory(quantity); // Update inventory based on sale quantity
-	closeAddSaleModal();
-	loadSales(farmerId);
-});
-
 // Edit an existing sale
 function editSale(id) {
 	const sales = JSON.parse(localStorage.getItem("sales"));
@@ -534,4 +497,192 @@ document.addEventListener("DOMContentLoaded", () => {
 		loadSales(selectedFarmerId);
 	}
 	loadAllPurchases(); // Load all sales records on page load
+});
+
+// Load Orders Data from localStorage
+function loadOrders() {
+	const orders = JSON.parse(localStorage.getItem("orders"));
+	const tableBody = document.querySelector("#ordersTable tbody");
+	tableBody.innerHTML = ""; // Clear existing rows
+
+	orders.forEach((order) => {
+		const row = document.createElement("tr");
+		row.innerHTML = `
+        <td>${order.id}</td>
+        <td>${order.customerName}</td>
+        <td>${order.address}</td>
+        <td>${order.products
+					.map((p) => `${p.name} (${p.quantity})`)
+					.join(", ")}</td>
+        <td>${order.totalCost}</td>
+        <td>
+          <button onclick="editOrder(${order.id})">Edit</button>
+          <button onclick="deleteOrder(${order.id})">Delete</button>
+        </td>
+      `;
+		tableBody.appendChild(row);
+	});
+}
+
+// Load product cards for order creation
+function loadProductCards() {
+	const packages = JSON.parse(localStorage.getItem("packages"));
+	const productCardsContainer = document.getElementById("productCards");
+	productCardsContainer.innerHTML = ""; // Clear existing cards
+
+	packages.forEach((pkg) => {
+		const card = document.createElement("div");
+		card.className = "product-card";
+		card.innerHTML = `
+			<h4>${pkg.type}</h4>
+			<p>Price: $${pkg.price}</p>
+			<p>Available: ${pkg.quantity} pcs</p>
+			<label for="quantity-${pkg.id}">Quantity:</label>
+			<input type="number" id="quantity-${pkg.id}" class="productQuantity" min="1" max="${pkg.quantity}" />
+		`;
+		productCardsContainer.appendChild(card);
+	});
+}
+
+// Add a new order
+function showAddOrderModal() {
+	document.getElementById("addOrderModal").style.display = "block";
+	loadProductCards(); // Load product cards when the modal is shown
+}
+
+function closeAddOrderModal() {
+	document.getElementById("addOrderModal").style.display = "none";
+}
+
+document
+	.getElementById("addOrderForm")
+	.addEventListener("submit", function (e) {
+		e.preventDefault();
+		const customerName = document.getElementById("customerName").value;
+		const address = document.getElementById("address").value;
+		const products = getSelectedProducts();
+		const totalCost = calculateTotalCost(products);
+
+		const orders = JSON.parse(localStorage.getItem("orders")) || [];
+		const newId = orders.length ? orders[orders.length - 1].id + 1 : 1; // Auto-generate Order ID
+		const newOrder = { id: newId, customerName, address, products, totalCost };
+
+		orders.push(newOrder);
+		localStorage.setItem("orders", JSON.stringify(orders));
+
+		closeAddOrderModal();
+		loadOrders();
+	});
+
+// Edit an existing order
+function editOrder(id) {
+	const orders = JSON.parse(localStorage.getItem("orders"));
+	const order = orders.find((o) => o.id === id);
+
+	const newCustomerName = prompt(
+		"Enter new customer name:",
+		order.customerName
+	);
+	const newAddress = prompt("Enter new address:", order.address);
+	const newProducts = getSelectedProducts();
+	const newTotalCost = calculateTotalCost(newProducts);
+
+	if (newCustomerName && newAddress) {
+		order.customerName = newCustomerName;
+		order.address = newAddress;
+		order.products = newProducts;
+		order.totalCost = newTotalCost;
+
+		localStorage.setItem("orders", JSON.stringify(orders));
+		loadOrders();
+	}
+}
+
+// Delete an order
+function deleteOrder(id) {
+	const orders = JSON.parse(localStorage.getItem("orders"));
+	const updatedOrders = orders.filter((o) => o.id !== id);
+
+	localStorage.setItem("orders", JSON.stringify(updatedOrders));
+	loadOrders();
+}
+
+// Get selected products from the form
+function getSelectedProducts() {
+	const products = [];
+	const productElements = document.querySelectorAll(".product-card");
+	productElements.forEach((productElement) => {
+		const name = productElement.querySelector("h4").textContent;
+		const quantity = parseFloat(
+			productElement.querySelector(".productQuantity").value
+		);
+		if (name && !isNaN(quantity) && quantity > 0) {
+			products.push({ name, quantity });
+		}
+	});
+	return products;
+}
+
+// Calculate total cost for the order
+function calculateTotalCost(products) {
+	return products.reduce(
+		(total, product) =>
+			total + product.quantity * getProductPrice(product.name),
+		0
+	);
+}
+
+// Get product price from inventory
+function getProductPrice(productName) {
+	const packages = JSON.parse(localStorage.getItem("packages"));
+	const product = packages.find((pkg) => pkg.type === productName);
+	return product ? product.price : 0;
+}
+
+// Search and filter orders
+function searchOrders() {
+	const query = document.getElementById("searchOrders").value.toLowerCase();
+	const orders = JSON.parse(localStorage.getItem("orders"));
+	const filteredOrders = orders.filter(
+		(order) =>
+			order.customerName.toLowerCase().includes(query) ||
+			order.products.some((product) =>
+				product.name.toLowerCase().includes(query)
+			) ||
+			order.date.toLowerCase().includes(query)
+	);
+
+	const tableBody = document.querySelector("#ordersTable tbody");
+	tableBody.innerHTML = ""; // Clear existing rows
+
+	filteredOrders.forEach((order) => {
+		const row = document.createElement("tr");
+		row.innerHTML = `
+        <td>${order.id}</td>
+        <td>${order.customerName}</td>
+        <td>${order.address}</td>
+        <td>${order.products
+					.map((p) => `${p.name} (${p.quantity})`)
+					.join(", ")}</td>
+        <td>${order.totalCost}</td>
+        <td>
+          <button onclick="editOrder(${order.id})">Edit</button>
+          <button onclick="deleteOrder(${order.id})">Delete</button>
+        </td>
+      `;
+		tableBody.appendChild(row);
+	});
+}
+
+// Initial Load
+document.addEventListener("DOMContentLoaded", () => {
+	loadFarmers();
+	loadPackagingData();
+	loadInventory();
+	loadOrders(); // Load all orders on page load
+	loadAllPurchases(); // Load all sales records on page load
+	const selectedFarmerId = localStorage.getItem("selectedFarmerId");
+	if (selectedFarmerId) {
+		loadSales(selectedFarmerId);
+	}
 });

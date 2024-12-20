@@ -113,3 +113,26 @@ main {
 .home-button:hover {
 	background-color: #0056b3;
 }
+
+/* Product Card Styles */
+.product-card {
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	padding: 10px;
+	margin: 10px;
+	display: inline-block;
+	width: calc(33% - 20px);
+	box-sizing: border-box;
+}
+
+.product-card h4 {
+	margin: 0 0 10px 0;
+}
+
+.product-card p {
+	margin: 5px 0;
+}
+
+.product-card input {
+	width: 100%;
+}

@@ -273,55 +273,67 @@
 				class="tab"
 			>
 				<h1>Sales Management</h1>
+				<button onclick="showAddOrderModal()">Add Order</button>
 				<div>
-					<button onclick="showAddSaleModal()">Add Sale</button>
+					<input
+						type="text"
+						id="searchOrders"
+						placeholder="Search Orders"
+						oninput="searchOrders()"
+					/>
 				</div>
 
-				<!-- Sales List Table -->
-				<table id="salesTable">
+				<!-- Orders List Table -->
+				<table id="ordersTable">
 					<thead>
 						<tr>
-							<th>Sale ID</th>
-							<th>Date & Time</th>
-							<th>Quantity (kg)</th>
-							<th>Price per kg</th>
+							<th>Order ID</th>
+							<th>Customer Name</th>
+							<th>Address</th>
+							<th>Products</th>
 							<th>Total Cost</th>
 							<th>Actions</th>
 						</tr>
 					</thead>
 					<tbody>
-						<!-- Sales Rows Will Be Injected Here -->
+						<!-- Order rows will be dynamically injected -->
 					</tbody>
 				</table>
 
-				<!-- Modal for Adding Sale -->
+				<!-- Modal for Adding Order -->
 				<div
-					id="addSaleModal"
+					id="addOrderModal"
 					class="modal"
 				>
 					<div class="modal-content">
 						<span
 							class="close"
-							onclick="closeAddSaleModal()"
+							onclick="closeAddOrderModal()"
 							>&times;</span
 						>
-						<h2>Add Sale</h2>
-						<form id="addSaleForm">
-							<label for="saleQuantity">Quantity (kg):</label>
+						<h2>Add Order</h2>
+						<form id="addOrderForm">
+							<label for="customerName">Customer Name:</label>
 							<input
-								type="number"
-								id="saleQuantity"
+								type="text"
+								id="customerName"
 								required
 							/><br /><br />
 
-							<label for="salePrice">Price per kg:</label>
+							<label for="address">Address:</label>
 							<input
-								type="number"
-								id="salePrice"
+								type="text"
+								id="address"
 								required
 							/><br /><br />
 
-							<button type="submit">Add Sale</button>
+							<div id="productSelection">
+								<h3>Select Products</h3>
+								<div id="productCards">
+									<!-- Product cards will be dynamically injected -->
+								</div>
+							</div>
+							<button type="submit">Add Order</button>
 						</form>
 					</div>
 				</div>
