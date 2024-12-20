@@ -192,8 +192,8 @@ document.addEventListener("DOMContentLoaded", () => {
 if (!localStorage.getItem("rawInventory")) {
 	localStorage.setItem(
 		"rawInventory",
-		JSON.stringify({ id: 1, category: "Raw Blueberries", quantity: 1000 })
-	); // Default 1000kg
+		JSON.stringify({ id: 1, category: "Raw Blueberries", quantity: 0 })
+	);
 }
 
 if (!localStorage.getItem("packages")) {
@@ -570,6 +570,7 @@ document
 		orders.push(newOrder);
 		localStorage.setItem("orders", JSON.stringify(orders));
 
+		updateInventoryAfterOrder(products); // Update inventory after order
 		closeAddOrderModal();
 		loadOrders();
 	});
@@ -637,6 +638,19 @@ function getProductPrice(productName) {
 	const packages = JSON.parse(localStorage.getItem("packages"));
 	const product = packages.find((pkg) => pkg.type === productName);
 	return product ? product.price : 0;
+}
+
+// Update inventory after order
+function updateInventoryAfterOrder(products) {
+	const packages = JSON.parse(localStorage.getItem("packages"));
+	products.forEach((product) => {
+		const pkg = packages.find((p) => p.type === product.name);
+		if (pkg) {
+			pkg.quantity -= product.quantity;
+		}
+	});
+	localStorage.setItem("packages", JSON.stringify(packages));
+	loadInventory();
 }
 
 // Search and filter orders
