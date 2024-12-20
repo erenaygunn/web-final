@@ -515,6 +515,7 @@ function loadOrders() {
 					.map((p) => `${p.name} (${p.quantity})`)
 					.join(", ")}</td>
         <td>${order.totalCost}</td>
+        <td>${order.date}</td>
         <td>
           <button onclick="editOrder(${order.id})">Edit</button>
           <button onclick="deleteOrder(${order.id})">Delete</button>
@@ -562,10 +563,18 @@ document
 		const address = document.getElementById("address").value;
 		const products = getSelectedProducts();
 		const totalCost = calculateTotalCost(products);
+		const date = new Date().toLocaleString();
 
 		const orders = JSON.parse(localStorage.getItem("orders")) || [];
 		const newId = orders.length ? orders[orders.length - 1].id + 1 : 1; // Auto-generate Order ID
-		const newOrder = { id: newId, customerName, address, products, totalCost };
+		const newOrder = {
+			id: newId,
+			customerName,
+			address,
+			products,
+			totalCost,
+			date,
+		};
 
 		orders.push(newOrder);
 		localStorage.setItem("orders", JSON.stringify(orders));
@@ -679,6 +688,7 @@ function searchOrders() {
 					.map((p) => `${p.name} (${p.quantity})`)
 					.join(", ")}</td>
         <td>${order.totalCost}</td>
+        <td>${order.date}</td>
         <td>
           <button onclick="editOrder(${order.id})">Edit</button>
           <button onclick="deleteOrder(${order.id})">Delete</button>
