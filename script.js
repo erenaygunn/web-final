@@ -791,6 +791,48 @@ function searchOrders() {
 	});
 }
 
+// Calculate and display financial analysis
+function updateFinancialAnalysis() {
+	const orders = JSON.parse(localStorage.getItem("orders")) || [];
+	const purchases = JSON.parse(localStorage.getItem("purchases")) || [];
+	const taxRate = 0.1; // Define a tax rate of 10%
+
+	// Calculate income (sum of all sales revenue)
+	const income = orders.reduce((total, order) => total + order.totalCost, 0);
+	document.getElementById("income").textContent = income.toFixed(2);
+	document.getElementById(
+		"incomeCalculation"
+	).textContent = `Income = Sum of all sales revenue = $${income.toFixed(2)}`;
+
+	// Calculate expenses (total cost of all blueberry purchases)
+	const expenses = purchases.reduce(
+		(total, purchase) => total + purchase.totalCost,
+		0
+	);
+	document.getElementById("expenses").textContent = expenses.toFixed(2);
+	document.getElementById(
+		"expensesCalculation"
+	).textContent = `Expenses = Total cost of all blueberry purchases = $${expenses.toFixed(
+		2
+	)}`;
+
+	// Calculate taxes
+	const taxes = income * taxRate;
+	document.getElementById("taxes").textContent = taxes.toFixed(2);
+	document.getElementById(
+		"taxesCalculation"
+	).textContent = `Taxes = Income * Tax Rate (10%) = $${taxes.toFixed(2)}`;
+
+	// Calculate net profit (income - expenses - taxes)
+	const netProfit = income - expenses - taxes;
+	document.getElementById("netProfit").textContent = netProfit.toFixed(2);
+	document.getElementById(
+		"netProfitCalculation"
+	).textContent = `Net Profit = Income - Expenses - Taxes = $${netProfit.toFixed(
+		2
+	)}`;
+}
+
 // Initial Load
 document.addEventListener("DOMContentLoaded", () => {
 	loadFarmers();
@@ -798,6 +840,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	loadInventory();
 	loadOrders(); // Load all orders on page load
 	loadAllPurchases(); // Load all sales records on page load
+	updateFinancialAnalysis(); // Update financial analysis on page load
 	const selectedFarmerId = localStorage.getItem("selectedFarmerId");
 	if (selectedFarmerId) {
 		loadSales(selectedFarmerId);
