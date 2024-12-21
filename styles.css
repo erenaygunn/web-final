@@ -229,6 +229,22 @@ button:hover {
 	color: #eeeeee;
 }
 
+/* Searchbar Styles */
+.searchbar {
+	width: 300px;
+	padding: 10px;
+	margin: 10px 0;
+	border: 1px solid #76abae;
+	border-radius: 5px;
+	background-color: #eeeeee;
+	color: #222831;
+}
+
+.searchbar:focus {
+	outline: none;
+	border-color: #31363f;
+}
+
 /* Responsive Styles */
 @media (max-width: 768px) {
 	.navbar {
