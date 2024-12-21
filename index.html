@@ -401,7 +401,25 @@
 				class="tab"
 			>
 				<h1>Comprehensive Report</h1>
-				<!-- Content for Report -->
+				<div id="comprehensiveReport">
+					<h2>Financial Summary</h2>
+					<p>Total Income from Sales: $<span id="reportIncome">0</span></p>
+					<p>
+						Total Expenses from Purchases: $<span id="reportExpenses">0</span>
+					</p>
+					<p>Tax Applied: $<span id="reportTaxes">0</span></p>
+					<p>Net Profit: $<span id="reportNetProfit">0</span></p>
+					<h2>Sales Summary</h2>
+					<p>Number of Products Sold per Category:</p>
+					<ul id="productsSoldPerCategory">
+						<!-- Products sold per category will be dynamically injected -->
+					</ul>
+					<h2>Inventory Summary</h2>
+					<p>Remaining Stock per Category:</p>
+					<ul id="remainingStockPerCategory">
+						<!-- Remaining stock per category will be dynamically injected -->
+					</ul>
+				</div>
 			</section>
 		</main>
 

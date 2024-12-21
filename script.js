@@ -847,6 +847,80 @@ function updateFinancialAnalysis() {
 	)}$`;
 }
 
+// Generate Comprehensive Report
+function generateComprehensiveReport() {
+	const orders = JSON.parse(localStorage.getItem("orders")) || [];
+	const purchases = JSON.parse(localStorage.getItem("purchases")) || [];
+	const packages = JSON.parse(localStorage.getItem("packages")) || [];
+	const rawInventory = JSON.parse(localStorage.getItem("rawInventory")) || {};
+	const taxRate = 0.1; // Define a tax rate of 10%
+
+	// Calculate total income from sales
+	const totalIncome = orders.reduce(
+		(total, order) => total + order.totalCost,
+		0
+	);
+	document.getElementById("reportIncome").textContent = totalIncome.toFixed(2);
+
+	// Calculate total expenses from purchases
+	const totalExpenses = purchases.reduce(
+		(total, purchase) => total + purchase.totalCost,
+		0
+	);
+	document.getElementById("reportExpenses").textContent =
+		totalExpenses.toFixed(2);
+
+	// Calculate tax applied
+	const totalTaxes = totalIncome * taxRate;
+	document.getElementById("reportTaxes").textContent = totalTaxes.toFixed(2);
+
+	// Calculate net profit
+	const netProfit = totalIncome - totalExpenses - totalTaxes;
+	document.getElementById("reportNetProfit").textContent = netProfit.toFixed(2);
+
+	// Calculate number of products sold per category
+	const productsSoldPerCategory = {};
+	orders.forEach((order) => {
+		order.products.forEach((product) => {
+			if (!productsSoldPerCategory[product.name]) {
+				productsSoldPerCategory[product.name] = 0;
+			}
+			productsSoldPerCategory[product.name] += product.quantity;
+		});
+	});
+
+	const productsSoldPerCategoryList = document.getElementById(
+		"productsSoldPerCategory"
+	);
+	productsSoldPerCategoryList.innerHTML = "";
+	for (const [category, quantity] of Object.entries(productsSoldPerCategory)) {
+		const listItem = document.createElement("li");
+		listItem.textContent = `${category}: ${quantity} pcs`;
+		productsSoldPerCategoryList.appendChild(listItem);
+	}
+
+	// Calculate remaining stock per category
+	const remainingStockPerCategory = {};
+	remainingStockPerCategory["Raw Blueberries"] = rawInventory.quantity || 0;
+	packages.forEach((pkg) => {
+		remainingStockPerCategory[pkg.type] = pkg.quantity;
+	});
+
+	const remainingStockPerCategoryList = document.getElementById(
+		"remainingStockPerCategory"
+	);
+	remainingStockPerCategoryList.innerHTML = "";
+	for (const [category, quantity] of Object.entries(
+		remainingStockPerCategory
+	)) {
+		const listItem = document.createElement("li");
+		listItem.textContent = `${category}: ${
+			category === "Raw Blueberries" ? `${quantity} kg` : `${quantity} pcs`
+		}`;
+		remainingStockPerCategoryList.appendChild(listItem);
+	}
+}
+
 // Initial Load
 document.addEventListener("DOMContentLoaded", () => {
 	loadFarmers();
@@ -855,6 +929,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	loadOrders(); // Load all orders on page load
 	loadAllPurchases(); // Load all sales records on page load
 	updateFinancialAnalysis(); // Update financial analysis on page load
+	generateComprehensiveReport(); // Generate comprehensive report on page load
 	const selectedFarmerId = localStorage.getItem("selectedFarmerId");
 	if (selectedFarmerId) {
 		loadSales(selectedFarmerId);
