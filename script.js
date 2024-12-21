@@ -243,6 +243,7 @@ function loadInventory() {
 			<td>${item.category || item.type}</td>
 			<td>${item.category ? item.quantity + "kg" : item.quantity + "pcs"}</td>
 			<td>${item.threshold || " "}</td>
+			<td>${item.lastUpdate || "N/A"}</td>
 		`;
 		tableBody.appendChild(row);
 	});
@@ -296,6 +297,7 @@ function addPackage() {
 
 	// Update raw inventory
 	rawInventory.quantity -= totalWeight;
+	rawInventory.lastUpdate = new Date().toLocaleString();
 	localStorage.setItem("rawInventory", JSON.stringify(rawInventory));
 
 	// Update packages
@@ -307,6 +309,7 @@ function addPackage() {
 		packages[existingPackageIndex].quantity += numPackages;
 		packages[existingPackageIndex].price = price; // Update price
 		packages[existingPackageIndex].threshold = threshold; // Update threshold
+		packages[existingPackageIndex].lastUpdate = new Date().toLocaleString();
 	} else {
 		// Add new package
 		packages.push({
@@ -315,6 +318,7 @@ function addPackage() {
 			quantity: numPackages,
 			price,
 			threshold,
+			lastUpdate: new Date().toLocaleString(),
 		});
 	}
 
@@ -345,8 +349,10 @@ function editPackage(index) {
 
 	pkg.price = newPrice;
 	pkg.threshold = newThreshold;
+	pkg.lastUpdate = new Date().toLocaleString();
 	localStorage.setItem("packages", JSON.stringify(packages));
 	loadPackagingData();
+	loadInventory();
 	checkStockAlerts();
 }
 
@@ -370,11 +376,13 @@ function deletePackage(index) {
 	// Add the deleted package quantity back to raw inventory
 	const updatedRawInventory = rawInventory.quantity + packages[index].quantity;
 	rawInventory.quantity = updatedRawInventory;
+	rawInventory.lastUpdate = new Date().toLocaleString();
 	localStorage.setItem("rawInventory", JSON.stringify(rawInventory));
 
 	packages.splice(index, 1);
 	localStorage.setItem("packages", JSON.stringify(packages));
 	loadPackagingData();
+	loadInventory();
 }
 
 // Initial Load
