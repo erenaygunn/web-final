@@ -802,7 +802,9 @@ function updateFinancialAnalysis() {
 	document.getElementById("income").textContent = income.toFixed(2);
 	document.getElementById(
 		"incomeCalculation"
-	).textContent = `Income = Sum of all sales revenue = $${income.toFixed(2)}`;
+	).textContent = `Total Income = ${orders
+		.map((order) => order.totalCost)
+		.join("$ + ")}$ = ${income.toFixed(2)}$`;
 
 	// Calculate expenses (total cost of all blueberry purchases)
 	const expenses = purchases.reduce(
@@ -812,25 +814,29 @@ function updateFinancialAnalysis() {
 	document.getElementById("expenses").textContent = expenses.toFixed(2);
 	document.getElementById(
 		"expensesCalculation"
-	).textContent = `Expenses = Total cost of all blueberry purchases = $${expenses.toFixed(
-		2
-	)}`;
+	).textContent = `Expenses = ${purchases
+		.map((purchase) => purchase.totalCost)
+		.join("$ + ")}$ = ${expenses.toFixed(2)}$`;
 
 	// Calculate taxes
 	const taxes = income * taxRate;
 	document.getElementById("taxes").textContent = taxes.toFixed(2);
 	document.getElementById(
 		"taxesCalculation"
-	).textContent = `Taxes = Income * Tax Rate (10%) = $${taxes.toFixed(2)}`;
+	).textContent = `Taxes = Income x Tax Rate (10%) = ${income.toFixed(
+		2
+	)}$ x 0.1 = ${taxes.toFixed(2)}$`;
 
 	// Calculate net profit (income - expenses - taxes)
 	const netProfit = income - expenses - taxes;
 	document.getElementById("netProfit").textContent = netProfit.toFixed(2);
 	document.getElementById(
 		"netProfitCalculation"
-	).textContent = `Net Profit = Income - Expenses - Taxes = $${netProfit.toFixed(
+	).textContent = `Net Profit = Income - Expenses - Taxes = ${income.toFixed(
 		2
-	)}`;
+	)}$ - ${expenses.toFixed(2)}$ - ${taxes.toFixed(2)}$ = ${netProfit.toFixed(
+		2
+	)}$`;
 }
 
 // Initial Load
