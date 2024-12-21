@@ -187,6 +187,18 @@
 
 				<!-- All Sales Records Table -->
 				<h2>All Sales Records</h2>
+				<div>
+					<label for="sortSales">Sort by:</label>
+					<select
+						id="sortSales"
+						onchange="sortSales()"
+					>
+						<option value="date">Date</option>
+						<option value="quantity">Quantity</option>
+						<option value="price">Price per kg</option>
+						<option value="totalCost">Total Cost</option>
+					</select>
+				</div>
 				<table id="allSalesTable">
 					<thead>
 						<tr>
@@ -312,10 +324,25 @@
 					<ul id="revenuePerOrder">
 						<!-- Revenue per order will be dynamically injected -->
 					</ul>
+					<p>Units Sold: Total units sold per category:</p>
+					<ul id="unitsSoldPerCategory">
+						<!-- Units sold per category will be dynamically injected -->
+					</ul>
 				</div>
 
 				<!-- Orders List Table -->
 				<h2>Order History</h2>
+				<div>
+					<label for="sortOrders">Sort by:</label>
+					<select
+						id="sortOrders"
+						onchange="sortOrders()"
+					>
+						<option value="date">Date</option>
+						<option value="totalCost">Total Cost</option>
+						<option value="id">Order ID</option>
+					</select>
+				</div>
 				<table id="ordersTable">
 					<thead>
 						<tr>

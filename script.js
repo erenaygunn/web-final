@@ -485,6 +485,49 @@ function selectFarmer(farmerId) {
 	loadSales(farmerId);
 }
 
+// Sort sales by selected criteria
+function sortSales() {
+	const sortBy = document.getElementById("sortSales").value;
+	const purchases = JSON.parse(localStorage.getItem("purchases")) || [];
+	purchases.sort((a, b) => {
+		if (sortBy === "date") {
+			return new Date(a.date) - new Date(b.date);
+		} else if (sortBy === "quantity") {
+			return a.quantity - b.quantity;
+		} else if (sortBy === "price") {
+			return a.pricePerKg - b.pricePerKg;
+		} else if (sortBy === "totalCost") {
+			return a.totalCost - b.totalCost;
+		}
+	});
+	displayPurchases(purchases);
+}
+
+function displayPurchases(purchases) {
+	const tableBody = document.querySelector("#allSalesTable tbody");
+	tableBody.innerHTML = ""; // Clear existing rows
+
+	purchases.forEach((purchase) => {
+		const row = document.createElement("tr");
+		row.innerHTML = `
+			<td>${purchase.id}</td>
+			<td>${purchase.farmerName}</td>
+			<td>${purchase.farmerId}</td>
+			<td>${purchase.date}</td>
+			<td>${purchase.quantity}</td>
+			<td>${purchase.pricePerKg}</td>
+			<td>${purchase.totalCost}</td>
+		`;
+		tableBody.appendChild(row);
+	});
+}
+
+// Load all sales data and display in the table
+function loadAllPurchases() {
+	const purchases = JSON.parse(localStorage.getItem("purchases")) || [];
+	displayPurchases(purchases);
+}
+
 // Load all sales data and display in the table
 function loadAllPurchases() {
 	const purchases = JSON.parse(localStorage.getItem("purchases")) || [];
@@ -518,39 +561,10 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 });
 
-// Initial Load
-document.addEventListener("DOMContentLoaded", () => {
-	const selectedFarmerId = localStorage.getItem("selectedFarmerId");
-	if (selectedFarmerId) {
-		loadSales(selectedFarmerId);
-	}
-	loadAllPurchases(); // Load all sales records on page load
-});
-
 // Load Orders Data from localStorage
 function loadOrders() {
 	const orders = JSON.parse(localStorage.getItem("orders"));
-	const tableBody = document.querySelector("#ordersTable tbody");
-	tableBody.innerHTML = ""; // Clear existing rows
-
-	orders.forEach((order) => {
-		const row = document.createElement("tr");
-		row.innerHTML = `
-        <td>${order.id}</td>
-        <td>${order.customerName}</td>
-        <td>${order.address}</td>
-        <td>${order.products
-					.map((p) => `${p.name} (${p.quantity})`)
-					.join(", ")}</td>
-        <td>${order.totalCost}</td>
-        <td>${order.date}</td>
-        <td>
-          <button onclick="editOrder(${order.id})">Edit</button>
-          <button onclick="deleteOrder(${order.id})">Delete</button>
-        </td>
-      `;
-		tableBody.appendChild(row);
-	});
+	displayOrders(orders);
 	updateRevenueTracking(); // Update revenue tracking after loading orders
 }
 
@@ -730,6 +744,7 @@ function updateRevenueTracking() {
 
 	// Calculate revenue by product category
 	const revenueByCategory = {};
+	const unitsSoldPerCategory = {};
 	orders.forEach((order) => {
 		order.products.forEach((product) => {
 			const productRevenue = product.quantity * getProductPrice(product.name);
@@ -740,6 +755,11 @@ function updateRevenueTracking() {
 				revenueByCategory[product.name] = 0;
 			}
 			revenueByCategory[product.name] += netRevenue;
+
+			if (!unitsSoldPerCategory[product.name]) {
+				unitsSoldPerCategory[product.name] = 0;
+			}
+			unitsSoldPerCategory[product.name] += product.quantity;
 		});
 	});
 
@@ -749,6 +769,16 @@ function updateRevenueTracking() {
 		const listItem = document.createElement("li");
 		listItem.textContent = `${category}: $${revenue.toFixed(2)}`;
 		revenueByCategoryList.appendChild(listItem);
+	}
+
+	const unitsSoldPerCategoryList = document.getElementById(
+		"unitsSoldPerCategory"
+	);
+	unitsSoldPerCategoryList.innerHTML = "";
+	for (const [category, units] of Object.entries(unitsSoldPerCategory)) {
+		const listItem = document.createElement("li");
+		listItem.textContent = `${category}: ${units} pcs`;
+		unitsSoldPerCategoryList.appendChild(listItem);
 	}
 
 	// Calculate revenue per order
@@ -939,6 +969,40 @@ function generateComprehensiveReport() {
 		}`;
 		remainingStockPerCategoryList.appendChild(listItem);
 	}
+}
+
+// Sort orders by selected criteria
+function sortOrders() {
+	const sortBy = document.getElementById("sortOrders").value;
+	const orders = JSON.parse(localStorage.getItem("orders")) || [];
+	orders.sort((a, b) => {
+		if (sortBy === "date") {
+			return new Date(a.date) - new Date(b.date);
+		} else if (sortBy === "totalCost") {
+			return a.totalCost - b.totalCost;
+		} else if (sortBy === "id") {
+			return a.id - b.id;
+		}
+	});
+	displayOrders(orders);
+}
+
+function displayOrders(orders) {
+	const tableBody = document.querySelector("#ordersTable tbody");
+	tableBody.innerHTML = ""; // Clear existing rows
+
+	orders.forEach((order) => {
+		const row = document.createElement("tr");
+		row.innerHTML = `
+			<td>${order.id}</td>
+			<td>${order.customerName}</td>
+			<td>${order.address}</td>
+			<td>${order.products.map((p) => `${p.name} (${p.quantity})`).join(", ")}</td>
+			<td>${order.totalCost}</td>
+			<td>${order.date}</td>
+		`;
+		tableBody.appendChild(row);
+	});
 }
 
 // Initial Load
