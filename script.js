@@ -523,6 +523,7 @@ function loadOrders() {
       `;
 		tableBody.appendChild(row);
 	});
+	updateRevenueTracking(); // Update revenue tracking after loading orders
 }
 
 // Load product cards for order creation
@@ -583,6 +584,7 @@ document
 		closeAddOrderModal();
 		loadOrders();
 		checkStockAlerts(); // Check stock alerts after updating inventory
+		updateRevenueTracking(); // Update revenue tracking after adding order
 	});
 
 // Edit an existing order
@@ -606,6 +608,7 @@ function editOrder(id) {
 
 		localStorage.setItem("orders", JSON.stringify(orders));
 		loadOrders();
+		updateRevenueTracking(); // Update revenue tracking after editing order
 	}
 }
 
@@ -616,6 +619,7 @@ function deleteOrder(id) {
 
 	localStorage.setItem("orders", JSON.stringify(updatedOrders));
 	loadOrders();
+	updateRevenueTracking(); // Update revenue tracking after deleting order
 }
 
 // Get selected products from the form
@@ -661,6 +665,94 @@ function updateInventoryAfterOrder(products) {
 	});
 	localStorage.setItem("packages", JSON.stringify(packages));
 	loadInventory();
+}
+
+// Calculate and display revenue tracking
+function updateRevenueTracking() {
+	const orders = JSON.parse(localStorage.getItem("orders")) || [];
+	const packages = JSON.parse(localStorage.getItem("packages")) || [];
+	const purchases = JSON.parse(localStorage.getItem("purchases")) || [];
+
+	// Calculate average raw blueberry cost
+	const totalPurchaseCost = purchases.reduce(
+		(total, purchase) => total + purchase.totalCost,
+		0
+	);
+	const totalPurchaseQuantity = purchases.reduce(
+		(total, purchase) => total + purchase.quantity,
+		0
+	);
+	const avgRawCost = totalPurchaseQuantity
+		? totalPurchaseCost / totalPurchaseQuantity
+		: 0;
+
+	// Calculate total revenue
+	const totalRevenue = orders.reduce((total, order) => {
+		const orderRevenue =
+			order.totalCost -
+			order.products.reduce(
+				(productTotal, product) =>
+					productTotal +
+					product.quantity * (avgRawCost * getProductWeight(product.name)),
+				0
+			);
+		return total + orderRevenue;
+	}, 0);
+	document.getElementById("totalRevenue").textContent = totalRevenue.toFixed(2);
+
+	// Calculate revenue by product category
+	const revenueByCategory = {};
+	orders.forEach((order) => {
+		order.products.forEach((product) => {
+			const productRevenue = product.quantity * getProductPrice(product.name);
+			const productCost =
+				product.quantity * (avgRawCost * getProductWeight(product.name));
+			const netRevenue = productRevenue - productCost;
+			if (!revenueByCategory[product.name]) {
+				revenueByCategory[product.name] = 0;
+			}
+			revenueByCategory[product.name] += netRevenue;
+		});
+	});
+
+	const revenueByCategoryList = document.getElementById("revenueByCategory");
+	revenueByCategoryList.innerHTML = "";
+	for (const [category, revenue] of Object.entries(revenueByCategory)) {
+		const listItem = document.createElement("li");
+		listItem.textContent = `${category}: $${revenue.toFixed(2)}`;
+		revenueByCategoryList.appendChild(listItem);
+	}
+
+	// Calculate revenue per order
+	const revenuePerOrderList = document.getElementById("revenuePerOrder");
+	revenuePerOrderList.innerHTML = "";
+	orders.forEach((order) => {
+		const orderRevenue =
+			order.totalCost -
+			order.products.reduce(
+				(total, product) =>
+					total +
+					product.quantity * (avgRawCost * getProductWeight(product.name)),
+				0
+			);
+		const listItem = document.createElement("li");
+		listItem.textContent = `Order ${order.id}: $${orderRevenue.toFixed(2)}`;
+		revenuePerOrderList.appendChild(listItem);
+	});
+}
+
+// Get product weight from inventory
+function getProductWeight(productName) {
+	const packageWeights = {
+		"Small (100g)": 0.1,
+		"Medium (200g)": 0.2,
+		"Large (500g)": 0.5,
+		"Extra Large (1kg)": 1,
+		"Family pack (2kg)": 2,
+		"Bulk pack (5kg)": 5,
+		custom: 0, // Custom weight will be handled separately
+	};
+	return packageWeights[productName] || 0;
 }
 
 // Search and filter orders
