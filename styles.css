@@ -245,6 +245,24 @@ button:hover {
 	border-color: #31363f;
 }
 
+/* Packaging Input Styles */
+#packaging input,
+#packaging select {
+	width: 300px;
+	padding: 10px;
+	margin: 10px 0;
+	border: 1px solid #76abae;
+	border-radius: 5px;
+	background-color: #eeeeee;
+	color: #222831;
+}
+
+#packaging input:focus,
+#packaging select:focus {
+	outline: none;
+	border-color: #31363f;
+}
+
 /* Responsive Styles */
 @media (max-width: 768px) {
 	.navbar {
@@ -252,6 +270,6 @@ button:hover {
 	}
 
 	.product-card {
-		width: calc(100% - 20px);
+		width: 300px;
 	}
 }
