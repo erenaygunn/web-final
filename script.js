@@ -959,6 +959,47 @@ function displayOrders(orders) {
 	});
 }
 
+// Generate CSV report
+function generateCSVReport(sectionId) {
+	const section = document.getElementById(sectionId);
+	const rows = [];
+	const headers = section.querySelectorAll("h2, p, ul");
+	headers.forEach((header) => {
+		if (header.tagName === "H2") {
+			rows.push([header.textContent]);
+		} else if (header.tagName === "P") {
+			const span = header.querySelector("span");
+			if (span) {
+				rows.push([
+					header.textContent.replace(span.textContent, "").trim(),
+					span.textContent,
+				]);
+			} else {
+				rows.push([header.textContent]);
+			}
+		} else if (header.tagName === "UL") {
+			const items = header.querySelectorAll("li");
+			items.forEach((item) => {
+				rows.push([item.textContent]);
+			});
+		}
+	});
+
+	let csvContent = "data:text/csv;charset=utf-8,";
+	rows.forEach((rowArray) => {
+		let row = rowArray.join(",");
+		csvContent += row + "\r\n";
+	});
+
+	const encodedUri = encodeURI(csvContent);
+	const link = document.createElement("a");
+	link.setAttribute("href", encodedUri);
+	link.setAttribute("download", `${sectionId}_report.csv`);
+	document.body.appendChild(link);
+	link.click();
+	document.body.removeChild(link);
+}
+
 // Initial Load
 document.addEventListener("DOMContentLoaded", () => {
 	loadFarmers();
