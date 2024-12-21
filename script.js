@@ -249,6 +249,19 @@ function loadInventory() {
 	});
 }
 
+// Toggle custom weight input field
+function toggleCustomWeightInput() {
+	const packageType = document.getElementById("packageType").value;
+	const customWeightContainer = document.getElementById(
+		"customWeightContainer"
+	);
+	if (packageType === "custom") {
+		customWeightContainer.style.display = "block";
+	} else {
+		customWeightContainer.style.display = "none";
+	}
+}
+
 // Add Package to Inventory
 function addPackage() {
 	const numPackages = parseFloat(document.getElementById("rawAmount").value);
@@ -279,8 +292,13 @@ function addPackage() {
 	};
 
 	let weightPerPackage = packageWeights[type];
+	let displayType = type;
 	if (type === "custom") {
-		weightPerPackage = parseFloat(prompt("Enter custom package weight (kg):"));
+		const customWeight = parseFloat(
+			document.getElementById("customWeight").value
+		);
+		weightPerPackage = customWeight / 1000;
+		displayType = `${customWeight}g`;
 		if (isNaN(weightPerPackage) || weightPerPackage <= 0) {
 			alert("Please enter a valid custom package weight.");
 			return;
@@ -302,7 +320,9 @@ function addPackage() {
 
 	// Update packages
 	const packages = JSON.parse(localStorage.getItem("packages"));
-	const existingPackageIndex = packages.findIndex((pkg) => pkg.type === type);
+	const existingPackageIndex = packages.findIndex(
+		(pkg) => pkg.type === displayType
+	);
 
 	if (existingPackageIndex >= 0) {
 		// Update existing package
@@ -314,7 +334,7 @@ function addPackage() {
 		// Add new package
 		packages.push({
 			id: packages.length + 2,
-			type: type,
+			type: displayType,
 			quantity: numPackages,
 			price,
 			threshold,
