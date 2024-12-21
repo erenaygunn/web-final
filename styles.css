@@ -2,11 +2,14 @@ body {
 	font-family: Arial, sans-serif;
 	margin: 0;
 	padding: 0;
+	background-color: #eeeeee;
+	color: #222831;
 }
 
 header {
-	background-color: #333;
+	background-color: #76abae;
 	padding: 10px 0;
+	text-align: center;
 }
 
 .navbar {
@@ -15,22 +18,26 @@ header {
 	padding: 0;
 	display: flex;
 	justify-content: center;
+	flex-wrap: wrap;
 }
 
 .navbar li {
-	margin: 0 10px;
+	margin: 5px;
 }
 
 .navbar a {
 	text-decoration: none;
-	color: white;
+	color: #222831;
 	padding: 10px 20px;
-	background-color: #444;
+	background-color: #eeeeee;
 	border-radius: 5px;
+	transition: background-color 0.3s;
 }
 
-.navbar a.active {
-	background-color: #007bff;
+.navbar a.active,
+.navbar a:hover {
+	background-color: #31363f;
+	color: #eeeeee;
 }
 
 main {
@@ -58,11 +65,12 @@ main {
 }
 
 .modal-content {
-	background-color: white;
-	margin: 15% auto;
+	background-color: #eeeeee;
+	margin: 4rem auto;
 	padding: 20px;
 	border: 1px solid #888;
 	width: 80%;
+	color: #222831;
 }
 
 .close {
@@ -74,7 +82,7 @@ main {
 
 .close:hover,
 .close:focus {
-	color: black;
+	color: #222831;
 	text-decoration: none;
 	cursor: pointer;
 }
@@ -104,14 +112,16 @@ main {
 	display: inline-block;
 	margin-top: 10px;
 	padding: 10px 20px;
-	background-color: #007bff;
-	color: white;
+	background-color: #76abae;
+	color: #eeeeee;
 	text-decoration: none;
 	border-radius: 5px;
+	transition: background-color 0.3s;
 }
 
 .home-button:hover {
-	background-color: #0056b3;
+	background-color: #31363f;
+	color: #eeeeee;
 }
 
 /* Product Card Styles */
@@ -123,6 +133,8 @@ main {
 	display: inline-block;
 	width: calc(33% - 20px);
 	box-sizing: border-box;
+	background-color: #eeeeee;
+	color: #222831;
 }
 
 .product-card h4 {
@@ -135,4 +147,95 @@ main {
 
 .product-card input {
 	width: 100%;
+	background-color: #eeeeee;
+	color: #222831;
+	border: 1px solid #76abae;
+	border-radius: 5px;
+	padding: 5px;
+}
+
+/* Table Styles */
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 20px;
+}
+
+table th,
+table td {
+	border: 1px solid #76abae;
+	padding: 10px;
+	text-align: left;
+}
+
+table th {
+	background-color: #76abae;
+	color: #eeeeee;
+}
+
+table td {
+	background-color: #eeeeee;
+	color: #222831;
+}
+
+/* Form Styles */
+form label {
+	display: block;
+	margin: 10px 0 5px;
+}
+
+form input,
+form select,
+form button {
+	padding: 10px;
+	border: 1px solid #76abae;
+	border-radius: 5px;
+	background-color: #eeeeee;
+	color: #222831;
+}
+
+form input:focus,
+form select:focus,
+form button:focus {
+	outline: none;
+	border-color: #31363f;
+}
+
+form button {
+	background-color: #76abae;
+	color: #eeeeee;
+	cursor: pointer;
+	transition: background-color 0.3s;
+}
+
+form button:hover {
+	background-color: #31363f;
+	color: #eeeeee;
+}
+
+/* Button Styles */
+button {
+	background-color: #76abae;
+	color: #eeeeee;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: background-color 0.3s;
+}
+
+button:hover {
+	background-color: #31363f;
+	color: #eeeeee;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+	.navbar {
+		flex-direction: column;
+	}
+
+	.product-card {
+		width: calc(100% - 20px);
+	}
 }
