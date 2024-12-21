@@ -582,6 +582,7 @@ document
 		updateInventoryAfterOrder(products); // Update inventory after order
 		closeAddOrderModal();
 		loadOrders();
+		checkStockAlerts(); // Check stock alerts after updating inventory
 	});
 
 // Edit an existing order
