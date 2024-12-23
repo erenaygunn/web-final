@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const pricePerKg = parseFloat(
 				document.getElementById("pricePerKg").value
 			);
+			const threshold = parseFloat(document.getElementById("threshold").value);
 			const totalCost = quantity * pricePerKg;
 			const date = new Date().toLocaleString();
 
@@ -38,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			purchases.push(newPurchase);
 			localStorage.setItem("purchases", JSON.stringify(purchases));
 
-			updateRawInventory(quantity);
+			updateRawInventory(quantity, threshold);
 			loadPurchases(farmerId);
 			document.getElementById("purchaseForm").reset();
 			document.getElementById("purchaseDate").value =
@@ -83,8 +84,10 @@ function loadPurchases(farmerId) {
 	});
 }
 
-function updateRawInventory(quantity) {
+function updateRawInventory(quantity, threshold) {
 	const rawInventory = JSON.parse(localStorage.getItem("rawInventory"));
 	rawInventory.quantity += quantity;
+	rawInventory.threshold = threshold;
+	rawInventory.lastUpdate = new Date().toLocaleString();
 	localStorage.setItem("rawInventory", JSON.stringify(rawInventory));
 }
