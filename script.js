@@ -1000,6 +1000,60 @@ function generateCSVReport(sectionId) {
 	document.body.removeChild(link);
 }
 
+// Generate visual reports
+function generateVisualReports() {
+	const orders = JSON.parse(localStorage.getItem("orders")) || [];
+	const revenueByCategory = {};
+	const unitsSoldPerCategory = {};
+
+	orders.forEach((order) => {
+		order.products.forEach((product) => {
+			if (!revenueByCategory[product.name]) {
+				revenueByCategory[product.name] = 0;
+			}
+			revenueByCategory[product.name] +=
+				product.quantity * getProductPrice(product.name);
+
+			if (!unitsSoldPerCategory[product.name]) {
+				unitsSoldPerCategory[product.name] = 0;
+			}
+			unitsSoldPerCategory[product.name] += product.quantity;
+		});
+	});
+
+	const ctx = document.getElementById("salesChart").getContext("2d");
+	new Chart(ctx, {
+		type: "bar",
+		data: {
+			labels: Object.keys(revenueByCategory),
+			datasets: [
+				{
+					label: "Revenue by Category",
+					data: Object.values(revenueByCategory),
+					backgroundColor: "rgba(75, 192, 192, 0.2)",
+					borderColor: "rgba(75, 192, 192, 1)",
+					borderWidth: 1,
+				},
+				{
+					label: "Units Sold by Category",
+					data: Object.values(unitsSoldPerCategory),
+					backgroundColor: "rgba(153, 102, 255, 0.2)",
+					borderColor: "rgba(153, 102, 255, 1)",
+					borderWidth: 1,
+				},
+			],
+		},
+		options: {
+			scales: {
+				y: {
+					beginAtZero: true,
+				},
+				maintainAspectRatio: false,
+			},
+		},
+	});
+}
+
 // Initial Load
 document.addEventListener("DOMContentLoaded", () => {
 	loadFarmers();
@@ -1009,6 +1063,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	loadAllPurchases(); // Load all sales records on page load
 	updateFinancialAnalysis(); // Update financial analysis on page load
 	generateComprehensiveReport(); // Generate comprehensive report on page load
+	generateVisualReports(); // Generate visual reports on page load
 	const selectedFarmerId = localStorage.getItem("selectedFarmerId");
 	if (selectedFarmerId) {
 		loadSales(selectedFarmerId);
