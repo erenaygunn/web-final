@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
+		<title>Application Documentation</title>
+		<link
+			rel="stylesheet"
+			href="styles.css"
+		/>
+	</head>
+	<body>
+		<header>
+			<h1>Application Documentation</h1>
+			<a
+				href="index.html"
+				class="home-button"
+				>Home</a
+			>
+		</header>
+		<main>
+			<section>
+				<h2>Navigation</h2>
+				<p>
+					Use the navigation bar at the top of the page to switch between
+					different modules:
+				</p>
+				<ul>
+					<li>
+						<strong>Farmers:</strong> Manage farmer records, including adding,
+						editing, and deleting farmers.
+					</li>
+					<li>
+						<strong>Packaging:</strong> Categorize and package raw blueberries,
+						update inventory, and set prices.
+					</li>
+					<li>
+						<strong>Sales:</strong> Create orders, track revenue, and generate
+						CSV reports.
+					</li>
+					<li>
+						<strong>Financial Analysis:</strong> View financial calculations
+						including income, expenses, taxes, and net profit.
+					</li>
+					<li>
+						<strong>Inventory:</strong> Track inventory items, set stock
+						thresholds, and view restocking dates.
+					</li>
+					<li>
+						<strong>Report:</strong> Generate comprehensive reports on sales,
+						expenses, and inventory.
+					</li>
+				</ul>
+			</section>
+
+			<section>
+				<h2>Code Structure</h2>
+				<p>
+					The application is structured into 2 JavaScript files, each handling
+					different functionalities:
+				</p>
+				<ul>
+					<li>
+						<strong>script.js:</strong> Contains the main logic for managing
+						farmers, packaging, sales, financial analysis, and inventory.
+					</li>
+					<li>
+						<strong>purchase.js:</strong> Handles the logic for managing
+						purchases from farmers, including updating inventory and calculating
+						total costs.
+					</li>
+				</ul>
+			</section>
+
+			<section>
+				<h2>Functionalities</h2>
+				<p>The application provides the following functionalities:</p>
+				<ul>
+					<li>
+						<strong>Supplier Management:</strong> Add, edit, and delete farmer
+						records. Manage individual sales records for each farmer.
+					</li>
+					<li>
+						<strong>Product Categorization and Packaging:</strong> Categorize
+						raw blueberries into predefined or custom package types. Update
+						inventory and set prices.
+					</li>
+					<li>
+						<strong>Sales Management:</strong> Create, update, and delete
+						orders. Track revenue and generate CSV reports.
+					</li>
+					<li>
+						<strong>Financial Analysis:</strong> Calculate and display income,
+						expenses, taxes, and net profit.
+					</li>
+					<li>
+						<strong>Inventory Management:</strong> Track inventory levels, set
+						stock thresholds, and generate low-stock alerts.
+					</li>
+					<li>
+						<strong>Comprehensive Report Module:</strong> Generate reports on
+						total income, expenses, tax applied, net profit, products sold, and
+						remaining stock.
+					</li>
+				</ul>
+			</section>
+
+			<section>
+				<h2>Calculations</h2>
+				<p>
+					The application performs some calculations to provide insights to
+					business:
+				</p>
+				<ul>
+					<li>
+						<strong>Total Cost:</strong> Calculated as
+						<code>quantity x price per kg</code> for purchases and
+						<code>quantity x price per package</code> for sales.
+					</li>
+					<li>
+						<strong>Revenue:</strong> Calculated as the sum of all sales
+						revenue.
+					</li>
+					<li>
+						<strong>Expenses:</strong> Calculated as the total cost of all
+						blueberry purchases.
+					</li>
+					<li>
+						<strong>Taxes:</strong> Calculated as
+						<code>income x tax rate</code>.
+					</li>
+					<li>
+						<strong>Net Profit:</strong> Calculated as
+						<code>income - expenses - taxes</code>.
+					</li>
+				</ul>
+			</section>
+		</main>
+	</body>
+</html>
